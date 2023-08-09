@@ -53,19 +53,12 @@ const canBotDeleteMessage = async (chatId, force = false) => {
 }
 
 const bot = new Telegraf(TELEGRAM_TOKEN);
+let botUsername = 'unknown';
+
 
 bot.on('text', async (ctx) => {
     try {
         const chatId = ctx.chat.id;
-
-        if (ctx.message.entities && ctx.message.entities.some(entity => entity.type === 'mention')) {
-            const canDelete = await canBotDeleteMessage(chatId, true); // использование force
-            const isWhitelisted = WHITELIST.includes(chatId.toString());
-            await ctx.telegram.sendMessage(chatId, `ID группы: ${chatId}\nМогу удалить сообщения: ${canDelete ? "Да" : "Нет"}\nГруппа в вайтлисте: ${isWhitelisted ? "Да" : "Нет"}`, {
-                reply_to_message_id: ctx.message.message_id
-            });
-            return;
-        }
 
         if (WHITELIST.includes(chatId.toString()) && await isAdvertisement(ctx.message.text)) {
             const canDelete = await canBotDeleteMessage(chatId);
@@ -82,6 +75,16 @@ bot.on('text', async (ctx) => {
                     reply_to_message_id: ctx.message.message_id
                 });
             }
+            return;
+        }
+        if (ctx.message.entities && ctx.message.entities.some(entity => 
+            entity.type === 'mention' && 
+            ctx.message.text.includes(botUsername))) {  // Проверка, что упоминание относится к имени вашего бота
+                const canDelete = await canBotDeleteMessage(chatId, true); // использование force
+                const isWhitelisted = WHITELIST.includes(chatId.toString());
+                await ctx.telegram.sendMessage(chatId, `ID группы: ${chatId}\nМогу удалить сообщения: ${canDelete ? "Да" : "Нет"}\nГруппа в вайтлисте: ${isWhitelisted ? "Да" : "Нет"}`, {
+                    reply_to_message_id: ctx.message.message_id
+                });
         }
     } catch (error) {
         console.error('Error processing message:', error);
@@ -101,6 +104,10 @@ bot.action('delete_ad', async (ctx) => {
     }
 });
 
-bot.launch();
 
-console.log("Бот запущен...");
+bot.telegram.getMe().then((botInfo) => {
+    botUsername = botInfo.username;
+    console.log(`Имя бота: ${botUsername}`);
+
+    bot.launch();
+});
