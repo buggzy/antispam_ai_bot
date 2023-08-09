@@ -1,0 +1,26 @@
+{
+  "name": "antispam_ai",
+  "version": "1.0.0",
+  "description": "telegram bot for antispam with OpenAI",
+  "main": "index.js",
+  "dependencies": {
+    "axios": "^1.4.0",
+    "dotenv": "^16.3.1",
+    "telegraf": "^4.12.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/buggzy/antispam_ai_bot.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/buggzy/antispam_ai_bot/issues"
+  },
+  "homepage": "https://github.com/buggzy/antispam_ai_bot#readme"
+}
